@@ -287,9 +287,9 @@ class Field extends Component
                     foreach ($this->when as $field => $value) {
                         $formFields = $this->formFields();
 
-                        // check fields value if exist, otherwise use direct input data
-                        if ($formFields && $formFields->{$field}()->exists()) {
-                            $inputValue = $formFields->{$field}()->value();
+                        // check form fields, otherwise use direct input data
+                        if ($formFields !== null) {
+                            $inputValue = $formFields->{$field}()->exists() ? $formFields->{$field}()->value() : '';
                         } else {
                             $inputValue = $input[$field] ?? '';
                         }
