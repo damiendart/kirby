@@ -24,20 +24,6 @@ use Kirby\Toolkit\V;
 class Field extends Component
 {
     /**
-     * Registry for all component mixins
-     *
-     * @var array
-     */
-    public static $mixins = [];
-
-    /**
-     * Registry for all component types
-     *
-     * @var array
-     */
-    public static $types = [];
-
-    /**
      * An array of all found errors
      *
      * @var array|null
@@ -50,6 +36,20 @@ class Field extends Component
      * @var \Kirby\Form\Fields|null
      */
     protected $formFields;
+
+    /**
+     * Registry for all component mixins
+     *
+     * @var array
+     */
+    public static $mixins = [];
+
+    /**
+     * Registry for all component types
+     *
+     * @var array
+     */
+    public static $types = [];
 
     public function __construct(string $type, array $attrs = [], ?Fields $formFields = null)
     {
@@ -281,15 +281,14 @@ class Field extends Component
         if ($this->isRequired() === true && $this->save() === true && $this->isEmpty() === true) {
             // check the data of the relevant fields if there is a when option
             if (empty($this->when) === false && is_array($this->when) === true) {
-                $input = $this->attrs['input'] ?? [];
+                $formFields = $this->formFields();
+                $input      = $this->attrs['input'] ?? [];
 
-                if (empty($input) === false) {
+                if (empty($input) === false || $formFields !== null) {
                     foreach ($this->when as $field => $value) {
-                        $formFields = $this->formFields();
-
                         // check form fields, otherwise use direct input data
                         if ($formFields !== null) {
-                            $inputValue = $formFields->{$field}()->exists() ? $formFields->{$field}()->value() : '';
+                            $inputValue = $formFields->{$field}() !== null ? $formFields->{$field}()->value() : '';
                         } else {
                             $inputValue = $input[$field] ?? '';
                         }
